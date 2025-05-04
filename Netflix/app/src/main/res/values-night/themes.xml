@@ -1,0 +1,15 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Netflix" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="colorPrimary">@color/primaria</item>
+        <item name="colorPrimaryVariant">@color/primaria_variacao</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/secundaria</item>
+
+        <item name="android:windowBackground">@color/fundo</item>
+        <item name="android:statusBarColor">@color/primaria</item>
+        <item name="statusBarBackground">@color/primaria</item>
+        <item name="statusBarForeground">@color/white</item>
+    </style>
+</resources>
