@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.activityfragment"
+    namespace = "com.example.appimc"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.activityfragment"
+        applicationId = "com.example.appimc"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

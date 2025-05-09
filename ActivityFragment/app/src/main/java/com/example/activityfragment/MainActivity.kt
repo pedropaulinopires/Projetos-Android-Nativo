@@ -25,10 +25,13 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        var filme = Filme("Velozes e Furiosos")
+
         buttonAbrir = findViewById<Button>(R.id.button_abrir)
         buttonAbrir.setOnClickListener {
+
             var intent = Intent(this, DetalhesActivity::class.java)
-            intent.putExtra("Texto", "Voltar")
+            intent.putExtra("filme", filme)
 
             startActivity(intent)
         }
