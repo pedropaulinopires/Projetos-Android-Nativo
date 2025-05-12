@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.commit
 import com.example.aulafragment.fragments.ChamadasFragment
 import com.example.aulafragment.fragments.ConversasFragment
 
@@ -53,11 +55,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun criarFragmentChamadas(){
-        supportFragmentManager
-            .beginTransaction()
-//            .remove(conversasFragments)
-            .replace(R.id.fragment_conteudo, ChamadasFragment())
-            .commit()
+        supportFragmentManager.commit {
+            replace(R.id.fragment_conteudo, ChamadasFragment().apply {
+                arguments = bundleOf(
+                    "texto" to "Chamadas"
+                )
+            })
+        }
 
     }
 }
