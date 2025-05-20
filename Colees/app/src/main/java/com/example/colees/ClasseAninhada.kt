@@ -42,11 +42,18 @@ fun main() {
 //
 //    var (modelo, ano) = carro1
 
-    var pessoa = Pessoa("Pedro", 15, "123", "1423", "78954")
-    print(pessoa.nome)
-    print(pessoa.idade)
-    print(pessoa.maiorIdade)
-    print(pessoa.telefones)
+//    var pessoa = Pessoa("Pedro", 15, "123", "1423", "78954")
+//    print(pessoa.nome)
+//    print(pessoa.idade)
+//    print(pessoa.maiorIdade)
+//    print(pessoa.telefones)
+
+//    var lista = listOf<String>("Pedr")
+//
+//    var lista2 = mutableListOf<String>("teste")
+
+    var set1 = setOf<String>("Pedro", "Marcelo")
+    var set2 = mutableSetOf<String>("Pedro", "Marcelo")
 
 
 
