@@ -5,8 +5,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
 class RecyclerViewActivity : AppCompatActivity() {
 
@@ -26,6 +28,9 @@ class RecyclerViewActivity : AppCompatActivity() {
 
         rvLista = findViewById<RecyclerView>(R.id.rv_lista)
         rvLista.adapter = MensagemAdapter(lista)
-        rvLista.layoutManager = LinearLayoutManager(this)
+//        rvLista.layoutManager = LinearLayoutManager(this)
+//        rvLista.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+//        rvLista.layoutManager = GridLayoutManager(this, 2)
+//        rvLista.layoutManager = StaggeredGridLayoutManager(2, RecyclerView.VERTICAL)
     }
 }
