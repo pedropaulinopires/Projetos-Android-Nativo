@@ -16,7 +16,7 @@ class MensagemAdapter(
         val textNome: TextView
 
         init {
-            textNome = itemView.findViewById<TextView>(R.id.text_nome)
+            textNome = itemView.findViewById<TextView>(R.id.text_nome_card)
         }
     }
 
@@ -25,7 +25,7 @@ class MensagemAdapter(
         viewType: Int
     ): MensagemViewHolder {
         var layoutInflater = LayoutInflater.from(parent.context)
-        var itemView = layoutInflater.inflate(R.layout.item_lista, parent, false)
+        var itemView = layoutInflater.inflate(R.layout.item_cardview, parent, false)
         return  MensagemViewHolder(itemView)
     }
 

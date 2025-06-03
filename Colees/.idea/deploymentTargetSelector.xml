@@ -13,7 +13,7 @@
       </SelectionState>
       <SelectionState runConfigName="RecyclerViewActivity">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-05-29T22:41:37.804473931Z">
+        <DropdownSelection timestamp="2025-06-02T22:55:18.735069317Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=42008707018984c1" />

@@ -31,6 +31,6 @@ class RecyclerViewActivity : AppCompatActivity() {
 //        rvLista.layoutManager = LinearLayoutManager(this)
 //        rvLista.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 //        rvLista.layoutManager = GridLayoutManager(this, 2)
-//        rvLista.layoutManager = StaggeredGridLayoutManager(2, RecyclerView.VERTICAL)
+        rvLista.layoutManager = StaggeredGridLayoutManager(2, RecyclerView.VERTICAL)
     }
 }
