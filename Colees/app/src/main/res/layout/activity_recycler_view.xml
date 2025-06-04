@@ -10,24 +10,30 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_lista"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="600dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
         android:contentDescription="Lista de itens"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
+
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
+
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5"
-
-        app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
         app:spanCount="2"
-
         tools:itemCount="20"
         tools:listitem="@layout/item_lista" />
+
+    <Button
+        android:id="@+id/button_clicar_novo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="Clicar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rv_lista"
+        tools:layout_editor_absoluteX="149dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->

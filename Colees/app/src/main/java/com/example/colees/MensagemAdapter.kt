@@ -7,8 +7,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class MensagemAdapter(
-    private val lista: List<String>
 ) : RecyclerView.Adapter<MensagemAdapter.MensagemViewHolder>() {
+
+    private val lista = mutableListOf<String>()
+
+
+    fun atualizarListaDados(listaNova: List<String>){
+        this.lista.addAll(listaNova)
+        notifyDataSetChanged()
+    }
+
 
     inner class MensagemViewHolder(
         val itemView: View

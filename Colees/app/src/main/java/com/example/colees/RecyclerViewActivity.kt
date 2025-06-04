@@ -1,6 +1,7 @@
 package com.example.colees
 
 import android.os.Bundle
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -14,6 +15,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 class RecyclerViewActivity : AppCompatActivity() {
 
     lateinit var rvLista: RecyclerView
+    lateinit var adapterLista: MensagemAdapter
+    lateinit var buttonClicarNovo: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,20 +28,26 @@ class RecyclerViewActivity : AppCompatActivity() {
             insets
         }
 
-        var lista = listOf<String>("Pedro", "Ana", "Julio")
+        buttonClicarNovo = findViewById<Button>(R.id.button_clicar_novo)
+        var lista = mutableListOf<String>("Pedro", "Ana", "Julio")
 
         rvLista = findViewById<RecyclerView>(R.id.rv_lista)
-        rvLista.adapter = MensagemAdapter(lista)
+        adapterLista = MensagemAdapter()
+        adapterLista.atualizarListaDados(lista)
 //        rvLista.layoutManager = LinearLayoutManager(this)
 //        rvLista.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 //        rvLista.layoutManager = GridLayoutManager(this, 2)
         rvLista.layoutManager = StaggeredGridLayoutManager(2, RecyclerView.VERTICAL)
-
+        rvLista.adapter = adapterLista
 //        rvLista.addItemDecoration(
 //            DividerItemDecoration(
 //                this,
 //                RecyclerView.HORIZONTAL
 //            )
 //        )
+
+        buttonClicarNovo.setOnClickListener {
+            adapterLista.atualizarListaDados(mutableListOf("Teste"))
+        }
     }
 }
