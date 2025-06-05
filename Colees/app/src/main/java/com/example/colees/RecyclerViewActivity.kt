@@ -47,7 +47,8 @@ class RecyclerViewActivity : AppCompatActivity() {
 //        )
 
         buttonClicarNovo.setOnClickListener {
-            adapterLista.atualizarListaDados(mutableListOf("Teste"))
+//            adapterLista.atualizarListaDados(mutableListOf("Teste"))
+            adapterLista.adicionarElemento("Teste")
         }
     }
 }

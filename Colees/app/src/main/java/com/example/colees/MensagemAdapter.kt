@@ -18,6 +18,11 @@ class MensagemAdapter(
     }
 
 
+    fun adicionarElemento(elemento: String){
+        this.lista.add(elemento)
+        notifyItemInserted(this.lista.size)
+    }
+
     inner class MensagemViewHolder(
         val itemView: View
     ) : RecyclerView.ViewHolder(itemView){
