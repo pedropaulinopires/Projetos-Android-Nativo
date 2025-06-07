@@ -1,4 +1,4 @@
-package com.fyra.fit
+package com.fyra.fit.view
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -14,10 +14,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.fyra.fit.ui.theme.FyraFitTheme
+import com.fyra.fit.ui.theme.ProvideScreenInfo
+import com.fyra.fit.ui.theme.rsp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,14 +29,17 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             FyraFitTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                ProvideScreenInfo {
+                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                        Greeting(
+                            name = "Android",
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                    }
                 }
             }
         }
+
     }
 }
 
@@ -47,16 +51,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(16.dp)) // Espaçamento entre elementos
 
         Button(onClick = { /* Ação do botão */ }) {
-            Text("Clique aqui")
+            Text("Clique aqui", fontSize = 16f.rsp)
         }
     }
 
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    FyraFitTheme {
-        Greeting("Android")
-    }
 }
