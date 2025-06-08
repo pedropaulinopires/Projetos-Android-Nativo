@@ -15,7 +15,7 @@ class TranslationManager(
 ) : ITranslationManager {
 
 
-    fun getCurrentLanguage(): AppLanguage {
+    override fun getCurrentLanguage(): AppLanguage {
         var langSelected =
             sharedPreferencesApp.getStringValue(KeysSharedPreferences.SELECTED_LANGUAGE)
         lateinit var langCode: String
@@ -29,27 +29,20 @@ class TranslationManager(
         return AppLanguage.fromCode(langCode)
     }
 
-    fun setLanguage(language: AppLanguage) {
+    override fun setLanguage(language: AppLanguage) {
         sharedPreferencesApp.saveStringValue(KeysSharedPreferences.SELECTED_LANGUAGE, language.code)
         updateAppLanguage(language)
     }
 
-    fun updateAppLanguage(language: AppLanguage) {
+    override fun updateAppLanguage(language: AppLanguage) {
         val locale = Locale(language.code)
         Locale.setDefault(locale)
 
         val config = context.resources.configuration
         config.setLocale(locale)
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            context.createConfigurationContext(config)
-//        } else {
-//            @Suppress("DEPRECATION")
-//            context.resources.updateConfiguration(config, context.resources.displayMetrics)
-//        }
     }
 
     // Método para obter string traduzida com parâmetros
-    fun getString(@StringRes resId: Int, vararg formatArgs: Any): String =
+    override fun getString(@StringRes resId: Int, vararg formatArgs: Any): String =
         context.getString(resId, *formatArgs)
 }
