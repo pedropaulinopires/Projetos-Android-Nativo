@@ -1,13 +1,9 @@
 package com.fyra.fit.ui.theme
 
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 
 private val DarkColorScheme = darkColorScheme(
     primary = VermelhoFraco,
@@ -23,18 +19,6 @@ private val LightColorScheme = lightColorScheme(
     background = White
 )
 
-private val FyraFitTypography = Typography(
-    bodyMedium = TextStyle(
-        fontFamily = fontapp_poppinsFamily, fontWeight = FontWeight.Normal, fontSize = 12.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = fontapp_poppinsFamily, fontWeight = FontWeight.Normal, fontSize = 12.sp
-    ),
-    displayMedium = TextStyle(
-        fontFamily = fontapp_poppinsFamily, fontWeight = FontWeight.Normal, fontSize = 12.sp
-    )
-)
-
 @Composable
 fun FyraFitTheme(
     darkTheme: Boolean = false,//isSystemInDarkTheme(),
@@ -45,7 +29,7 @@ fun FyraFitTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = FyraFitTypography,
+        typography = Typography,
         content = content
     )
 }

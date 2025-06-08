@@ -41,6 +41,9 @@ android {
 
 dependencies {
 
+    val koin_android_version = "4.0.3"
+    implementation("io.insert-koin:koin-android:$koin_android_version")
+
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
