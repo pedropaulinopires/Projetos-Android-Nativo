@@ -2,4 +2,10 @@
 <resources>
     <string name="app_name">FyraFit</string>
     <string name="hello">Olá</string>
+    <string name="title_onboarding1">Seu Treinador Pessoal</string>
+    <string name="text_onboarding1">Estamos aqui para te ajudar a alcançar seus objetivos de maneira personalizada, eficiente e prática</string>
+    <string name="title_onboarding2">Treinos Personalizados</string>
+    <string name="text_onboarding2">Criamos um plano exclusivo com base no seu perfil, rotina e metas. Basta seguir as orientações e evoluir</string>
+    <string name="title_onboarding3">Tudo Sob Medida</string>
+    <string name="text_onboarding3">Receba dicas diárias, ajustes no treino e acompanhe seu progresso como se tivesse um personal ao seu lado</string>
 </resources>
