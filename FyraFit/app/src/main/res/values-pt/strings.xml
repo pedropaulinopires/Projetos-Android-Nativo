@@ -8,4 +8,7 @@
     <string name="text_onboarding2">Criamos um plano exclusivo com base no seu perfil, rotina e metas. Basta seguir as orientações e evoluir</string>
     <string name="title_onboarding3">Tudo Sob Medida</string>
     <string name="text_onboarding3">Receba dicas diárias, ajustes no treino e acompanhe seu progresso como se tivesse um personal ao seu lado</string>
+    <string name="next">Próximo</string>
+    <string name="skip">Pular</string>
+    <string name="start_training">Começar meu treino</string>
 </resources>
