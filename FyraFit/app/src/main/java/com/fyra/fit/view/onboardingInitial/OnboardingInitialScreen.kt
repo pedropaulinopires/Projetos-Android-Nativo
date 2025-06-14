@@ -298,7 +298,6 @@ private fun ButtonRow(
                 ),
                 contentPadding = PaddingValues(vertical = 12.dp, horizontal = 20.dp),
                 modifier = Modifier
-                    .animateContentSize()
                     .widthIn(min = 150.dp) // SEM animateContentSize()
             ) {
                 Text(
