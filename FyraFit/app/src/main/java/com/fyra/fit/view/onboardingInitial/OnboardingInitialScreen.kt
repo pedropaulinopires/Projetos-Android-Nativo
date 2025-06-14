@@ -1,9 +1,19 @@
 package com.fyra.fit.view.onboardingInitial
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +39,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -47,13 +58,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fyra.fit.R
+import com.fyra.fit.model.onboardingInitial.OnboardingInitialItemModel
 import com.fyra.fit.ui.theme.CinzaEscuro
 import com.fyra.fit.ui.theme.CinzaMedio
 import com.fyra.fit.ui.theme.VermelhoFraco
@@ -64,26 +78,25 @@ import com.fyra.fit.viewmodel.onboardingInitial.OnboardingInitialViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingInitialScreen() {
-    val viewModel = koinViewModel<OnboardingInitialViewModel>()
+    val viewModel: OnboardingInitialViewModel = viewModel()
+    val currentPage by viewModel.currentPage.collectAsState()
+    val itensOnboarding = viewModel.itensOnboarding
     val coroutineScope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(pageCount = { viewModel.itensOnboarding.size })
-
-    val imageVectors = remember(viewModel.itensOnboarding) {
-        viewModel.itensOnboarding.map { i -> i.idImage }
-    }.map { id ->
-        ImageVector.vectorResource(id = id) // aqui tudo bem, pois está dentro do escopo composable
-    }
-
-    // Função de navegação memorizada
+    val pagerState = rememberPagerState(pageCount = { 3 })
     val onNavigate = remember {
         { nextPage: Boolean ->
             scrollNextOrPreviusPageOnboarding(
-                pagerState, viewModel, nextPage, coroutineScope
-            )
+                pagerState,
+                nextPage,
+                coroutineScope,
+                { viewModel.nextPage() },
+                { viewModel.previousPage() })
         }
     }
 
@@ -96,7 +109,7 @@ fun OnboardingInitialScreen() {
                 modifier = Modifier.padding(horizontal = 15.dp),
                 title = { },
                 navigationIcon = {
-                    IconButtonArrowOnboarding(viewModel, { onNavigate(false) })
+                    IconButtonArrowOnboarding(currentPage, { onNavigate(false) })
                 },
             )
         }) { innerPadding ->
@@ -119,32 +132,56 @@ fun OnboardingInitialScreen() {
                                 .height(constraints.minHeight * .5f)
                                 .fillMaxWidth(),
                             pagerState = pagerState,
-                            imageVectors = imageVectors
+                            itensOnboarding = itensOnboarding
                         )
 
-                        ContentSection(
+                        Box(
                             modifier = Modifier
                                 .height(constraints.minHeight * .5f)
                                 .fillMaxWidth(),
-                            maxWidth = constraints.maxWidth,
-                            viewModel = viewModel,
-                            onNavigate = onNavigate
-                        )
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                modifier = Modifier.width(constraints.maxWidth * .9f),
+                            ) {
+                                Spacer(modifier = Modifier.height(15.dp))
+
+                                DotsOnboarding(currentPage = currentPage)
+
+                                Spacer(modifier = Modifier.height(15.dp))
+
+                                TextContent(
+                                    currentPage = currentPage,
+                                    itensOnboarding = itensOnboarding,
+                                    maxWidth = constraints.maxWidth
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(bottom = 20.dp),
+                                    contentAlignment = Alignment.BottomEnd
+                                ) {
+                                    ButtonRow(
+                                        currentPage = currentPage,
+                                        itensOnboardingSize = itensOnboarding.size,
+                                        onSkip = { },
+                                        onNext = { onNavigate(true) })
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
+
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun IconButtonArrowOnboarding(
-    viewModel: OnboardingInitialViewModel, onNavigateBack: () -> Unit
+    currentPage: Int, onNavigateBack: () -> Unit
 ) {
-    // Apenas este componente coleta o currentPage
-    val currentPage by viewModel.currentPage.collectAsState()
-
     if (currentPage > 0) {
         IconButton(
             onClick = onNavigateBack, modifier = Modifier.scale(1.4f)
@@ -161,27 +198,34 @@ private fun IconButtonArrowOnboarding(
 
 @Composable
 private fun ImageSection(
-    modifier: Modifier = Modifier, pagerState: PagerState, imageVectors: List<ImageVector>
+    modifier: Modifier = Modifier,
+    pagerState: PagerState,
+    itensOnboarding: List<OnboardingInitialItemModel>
 ) {
-    // Este componente não precisa de nenhum estado do ViewModel
+    val imagesPainter = remember { itensOnboarding.map { it.idImage } }.map { i ->
+        rememberVectorPainter(
+            image = ImageVector.vectorResource(id = i)
+        )
+    }
+
     Box(
         modifier = modifier, contentAlignment = Alignment.Center
     ) {
         HorizontalPager(
             state = pagerState,
             beyondViewportPageCount = 2,
-            userScrollEnabled = false,
+            userScrollEnabled = true,
             modifier = Modifier.fillMaxWidth()
         ) { page ->
+
+
             Box(
                 modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = rememberVectorPainter(
-                        image = imageVectors[page]
-                    ),
+                    painter = imagesPainter[page],
                     contentDescription = null,
-                    contentScale = ContentScale.Fit,
+                    contentScale = ContentScale.Fit
                 )
             }
         }
@@ -189,52 +233,15 @@ private fun ImageSection(
 }
 
 @Composable
-private fun ContentSection(
-    modifier: Modifier = Modifier,
-    maxWidth: Dp,
-    viewModel: OnboardingInitialViewModel,
-    onNavigate: (Boolean) -> Unit
+private fun TextContent(
+    currentPage: Int, itensOnboarding: List<OnboardingInitialItemModel>, maxWidth: Dp
 ) {
-    Box(
-        modifier = modifier, contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier.width(maxWidth * .9f),
-        ) {
-            Spacer(modifier = Modifier.height(15.dp))
-
-            // DotsOnboarding coleta apenas currentPage
-            DotsOnboarding(viewModel = viewModel)
-
-            Spacer(modifier = Modifier.height(15.dp))
-
-            // TextContent coleta apenas os estados de texto
-            TextContent(viewModel = viewModel, maxWidth = maxWidth)
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 20.dp),
-                contentAlignment = Alignment.BottomEnd
-            ) {
-                // ButtonRow coleta apenas currentTextButton
-                ButtonRow(
-                    viewModel = viewModel,
-                    onSkip = { /* Implementar ação de skip */ },
-                    onNext = { onNavigate(true) })
-            }
-        }
-    }
-}
-
-@Composable
-private fun TextContent(viewModel: OnboardingInitialViewModel, maxWidth: Dp) {
-    val currentTitle by viewModel.currentTitle.collectAsState()
-    val currentText by viewModel.currentText.collectAsState()
+    val listTitle = remember { itensOnboarding.map { it.idTitle } }.map { i -> stringResource(i) }
+    val listText = remember { itensOnboarding.map { it.idText } }.map { i -> stringResource(i) }
 
     Column {
         Text(
-            text = stringResource(currentTitle),
+            listTitle[currentPage],
             fontFamily = fontapp_poppinsFamily,
             fontWeight = FontWeight.Black,
             color = CinzaEscuro,
@@ -243,7 +250,7 @@ private fun TextContent(viewModel: OnboardingInitialViewModel, maxWidth: Dp) {
         )
         Spacer(modifier = Modifier.height(14.dp))
         Text(
-            text = stringResource(currentText),
+            listText[currentPage],
             fontFamily = fontapp_poppinsFamily,
             fontWeight = FontWeight.Normal,
             color = CinzaMedio,
@@ -256,98 +263,105 @@ private fun TextContent(viewModel: OnboardingInitialViewModel, maxWidth: Dp) {
 
 @Composable
 private fun ButtonRow(
-    viewModel: OnboardingInitialViewModel, onSkip: () -> Unit, onNext: () -> Unit
+    currentPage: Int, itensOnboardingSize: Int, onSkip: () -> Unit, onNext: () -> Unit
 ) {
-    // Apenas este componente coleta o currentTextButton
-    val currentTextButton by viewModel.currentTextButton.collectAsState()
-    val currentPage by viewModel.currentPage.collectAsState()
-    val sizeItensOnboarding = viewModel.sizeItensOnboarding
+    val stringSkip = stringResource(R.string.skip)
+    val stringNext = stringResource(R.string.next)
+    val stringStartTraining = stringResource(R.string.start_training)
+
+    val isLastPage = currentPage == itensOnboardingSize - 1
+    val buttonText = remember(isLastPage) {
+        if (isLastPage) stringStartTraining else stringNext
+    }
 
     Row(
         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        TextButton(onClick = onSkip) {
-            if (currentPage < sizeItensOnboarding - 1) Text(
-                stringResource(R.string.skip),
-                color = CinzaEscuro,
-                fontSize = responsiveSp(18f),
-                fontWeight = FontWeight.Normal
-            )
+        Box(contentAlignment = Alignment.BottomStart) {
+            if (!isLastPage) {
+                TextButton(onClick = onSkip) {
+                    Text(
+                        stringSkip,
+                        color = CinzaEscuro,
+                        fontSize = responsiveSp(18f),
+                        fontWeight = FontWeight.Normal
+                    )
+                }
+            }
         }
 
-
-        Button(
-            onClick = onNext,
-            shape = RoundedCornerShape(
-                topStart = 10.dp, bottomStart = 10.dp, bottomEnd = 10.dp
-            ),
-            contentPadding = PaddingValues(vertical = 12.dp, horizontal = 20.dp),
-            modifier = Modifier
-                .animateContentSize(
-                    animationSpec = tween(
-                        durationMillis = 400, easing = EaseInOut,
-                    ),
-
-                    )
-                .widthIn(min = 150.dp)
-        ) {
-            Text(
-                stringResource(currentTextButton),
-                fontSize = responsiveSp(20f),
-                fontWeight = FontWeight.Black
-            )
+        Box(contentAlignment = Alignment.BottomEnd) {
+            Button(
+                onClick = onNext,
+                shape = RoundedCornerShape(
+                    topStart = 10.dp, bottomStart = 10.dp, bottomEnd = 10.dp
+                ),
+                contentPadding = PaddingValues(vertical = 12.dp, horizontal = 20.dp),
+                modifier = Modifier
+                    .animateContentSize()
+                    .widthIn(min = 150.dp) // SEM animateContentSize()
+            ) {
+                Text(
+                    buttonText, fontSize = responsiveSp(20f), fontWeight = FontWeight.Black
+                )
+            }
         }
     }
 }
 
 @Composable
-fun DotsOnboarding(viewModel: OnboardingInitialViewModel) {
-    // Apenas este componente coleta currentPage
-    val currentPage by viewModel.currentPage.collectAsState()
+private fun DotsOnboarding(currentPage: Int) {
 
-    val dotWidth = 80.dp
-    val dotHeight = 5.dp
-    val totalWidth = dotWidth * 3
-    val borderRadius = RoundedCornerShape(10.dp)
-
-    val animatedOffset by animateDpAsState(
-        targetValue = dotWidth * currentPage,
-        animationSpec = tween(durationMillis = 400, easing = EaseInOut),
-        label = "dotBarOffset"
-    )
-
-    Box(
-        modifier = Modifier
-            .width(totalWidth)
-            .height(dotHeight)
-            .clip(borderRadius)
-            .background(color = Color(0xFFD6D5D5))
-    ) {
-        Box(
-            modifier = Modifier
-                .offset(x = animatedOffset)
-                .width(dotWidth)
-                .height(dotHeight)
-                .clip(borderRadius)
-                .background(color = VermelhoFraco)
-        )
-    }
+//    val dotWidth = 80.dp
+//    val dotHeight = 5.dp
+//    val borderRadius = RoundedCornerShape(10.dp)
+//    val totalDots = 3
+//
+//    val density = LocalDensity.current
+//    val dotWidthPx = with(density) { dotWidth.toPx() }
+//
+//    val animatedOffsetPx by animateFloatAsState(
+//        targetValue = dotWidthPx * currentPage,
+//        animationSpec = tween(durationMillis = 400, easing = EaseInOut),
+//        label = "dotBarOffset"
+//    )
+//
+//    val animatedOffsetDp = with(density) { animatedOffsetPx.toDp() }
+//
+//    Box(
+//        modifier = Modifier
+//            .width(dotWidth * totalDots)
+//            .height(dotHeight)
+//            .background(color = Color(0xFFD6D5D5), shape = borderRadius)
+//    ) {
+//        Box(
+//            modifier = Modifier
+//                .offset(x = animatedOffsetDp)
+//                .size(width = dotWidth, height = dotHeight)
+//                .background(color = VermelhoFraco, shape = borderRadius)
+//        )
+//    }
 }
+
 
 private fun scrollNextOrPreviusPageOnboarding(
     pagerState: PagerState,
-    viewModel: OnboardingInitialViewModel,
-    nextPage: Boolean,
-    coroutineScope: CoroutineScope
+    isNextPage: Boolean,
+    coroutineScope: CoroutineScope,
+    nextPage: () -> Unit,
+    previousPage: () -> Unit,
 ) {
     coroutineScope.launch {
         pagerState.animateScrollToPage(
-            page = maxOf(0, pagerState.currentPage + (if (nextPage) 1 else -1)),
+            page = maxOf(0, pagerState.currentPage + (if (isNextPage) 1 else -1)),
             animationSpec = tween(
                 durationMillis = 400,
                 easing = EaseInOut,
             )
         )
     }
-    if (nextPage) viewModel.nextPage() else viewModel.previousPage()
+    if (isNextPage) nextPage() else previousPage()
 }
+
+
+

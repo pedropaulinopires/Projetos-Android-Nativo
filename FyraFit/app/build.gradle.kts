@@ -46,6 +46,7 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose:$koin_android_version")
     implementation("io.coil-kt:coil-compose:2.5.0")
 
+
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
